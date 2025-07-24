@@ -2,120 +2,116 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>米廚家居 廚具報價試算器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>報價單產生器 - 米廚家居</title>
   <style>
     body {
-      font-family: "Microsoft JhengHei", sans-serif;
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 10px;
-      background: #f8f8f8;
-    }
-    h2 {
-      text-align: center;
+      font-family: "Segoe UI", sans-serif;
+      padding: 2em;
+      background-color: #f7f7f7;
       color: #333;
     }
-    #material-buttons button {
-      margin: 5px;
-      padding: 10px 15px;
-      border: 1px solid #ccc;
-      background: white;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    #material-buttons button.selected {
-      background-color: #007bff;
-      color: white;
-      border-color: #007bff;
+    h1 {
+      font-size: 24px;
+      color: #222;
     }
     label {
-      font-weight: bold;
       display: block;
-      margin-top: 15px;
+      margin-top: 1em;
     }
-    .result {
-      margin-top: 20px;
+    input[type="number"] {
+      padding: 0.5em;
+      width: 100%;
+      max-width: 200px;
+    }
+    select {
+      padding: 0.5em;
+      width: 100%;
+      max-width: 250px;
+    }
+    .addons {
+      margin-top: 1em;
+    }
+    .addon {
+      display: block;
+      margin-bottom: 0.5em;
+    }
+    #calculate-btn {
+      margin-top: 1.5em;
+      padding: 0.8em 1.5em;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 2em;
       font-size: 20px;
       font-weight: bold;
-      color: #007bff;
+      color: #d9534f;
     }
   </style>
 </head>
 <body>
+  <h1>米廚家居｜報價單產生器</h1>
 
-  <h2>米廚家居 - 廚具報價試算器</h2>
+  <label for="length">輸入廚具長度（單位：公分）：</label>
+  <input type="number" id="length" placeholder="例如：300" />
 
-  <label>請輸入廚具總長度（cm）：</label>
-  <input type="number" id="length" placeholder="例如 250" min="1" />
+  <label for="material">選擇檯面材質：</label>
+  <select id="material">
+    <option value="0">-- 請選擇 --</option>
+    <option value="170">人造石（$170 / 公分）</option>
+    <option value="250">石英石（$250 / 公分）</option>
+    <option value="400">不鏽鋼（$400 / 公分）</option>
+  </select>
 
-  <label>請選擇檯面材質：</label>
-  <div id="material-buttons">
-    <button data-price="125">不鏽鋼（$125/cm）</button>
-    <button data-price="170">人造石（$170/cm）</button>
+  <div class="addons">
+    <strong>加購項目：</strong><br />
+    <label class="addon"><input type="checkbox" class="addon" data-price="3000" /> 三抽組（$3,000）</label>
+    <label class="addon"><input type="checkbox" class="addon" data-price="1500" /> 調味拉籃（$1,500）</label>
+    <label class="addon"><input type="checkbox" class="addon" data-price="2000" /> 滑軌碗盤籃（$2,000）</label>
   </div>
 
-  <label>請選擇加購配件：</label>
-  <input type="checkbox" class="addon" data-price="3000" id="addon1" />
-  <label for="addon1">三抽（$3000）</label><br/>
-  <input type="checkbox" class="addon" data-price="6000" id="addon2" />
-  <label for="addon2">不鏽鋼爐下大拉籃(一組二式)（$6000）</label><br/>
-  <input type="checkbox" class="addon" data-price="1500" id="addon3" />
-  <label for="addon3">緩衝滑軌（$1,500）</label><br/>
-  <input type="checkbox" class="addon" data-price="1000" id="addon4" />
-  <label for="addon4">手把升級（$1,000）</label><br/>
-  <input type="checkbox" class="addon" data-price="6000" id="addon5" />
-  <label for="addon5">水槽＋龍頭（$6,000）</label><br/>
+  <button id="calculate-btn">計算總價</button>
 
-  <button style="margin-top: 20px; padding: 10px 15px;" id="calculate-btn">👉 計算總價</button>
-
-  <div class="result" id="result"></div>
+  <div id="result"></div>
 
   <script>
-    const materialButtons = document.querySelectorAll("#material-buttons button");
     let selectedMaterialPrice = 0;
 
-    materialButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        materialButtons.forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedMaterialPrice = parseInt(btn.dataset.price);
-      });
+    document.getElementById("material").addEventListener("change", (e) => {
+      selectedMaterialPrice = parseInt(e.target.value);
     });
 
-document.getElementById("calculate-btn").addEventListener("click", () => {
-  const lengthInput = document.getElementById("length");
-  const lengthCm = parseFloat(lengthInput.value);
+    document.getElementById("calculate-btn").addEventListener("click", () => {
+      const lengthInput = document.getElementById("length");
+      const lengthCm = parseFloat(lengthInput.value);
 
-  if (isNaN(lengthCm) || lengthCm <= 0) {
-    alert("請輸入正確的廚具長度（公分）");
-    lengthInput.focus();
-    return;
-  }
+      if (isNaN(lengthCm) || lengthCm <= 0) {
+        alert("請輸入正確的廚具長度（公分）");
+        lengthInput.focus();
+        return;
+      }
 
-  if (selectedMaterialPrice === 0) {
-    alert("請選擇檯面材質");
-    return;
-  }
+      if (selectedMaterialPrice === 0) {
+        alert("請選擇檯面材質");
+        return;
+      }
 
-  const materialCost = lengthCm * selectedMaterialPrice; // 
+      const materialCost = lengthCm * selectedMaterialPrice;
 
-  let addonTotal = 0;
-  document.querySelectorAll(".addon").forEach(cb => {
-    if (cb.checked) {
-      addonTotal += parseInt(cb.dataset.price);
-    }
-  });
-
-  const total = Math.round(materialCost + addonTotal);
-  document.getElementById("result").textContent = `總價為：NT$ ${total.toLocaleString()}`;
-});
-
+      let addonTotal = 0;
+      document.querySelectorAll(".addon").forEach(cb => {
+        if (cb.checked) {
+          addonTotal += parseInt(cb.dataset.price);
+        }
+      });
 
       const total = Math.round(materialCost + addonTotal);
       document.getElementById("result").textContent = `總價為：NT$ ${total.toLocaleString()}`;
     });
   </script>
-
 </body>
 </html>
