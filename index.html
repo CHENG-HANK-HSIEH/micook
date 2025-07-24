@@ -83,30 +83,34 @@
       });
     });
 
-    document.getElementById("calculate-btn").addEventListener("click", () => {
-      const lengthInput = document.getElementById("length");
-      const lengthCm = parseFloat(lengthInput.value);
+document.getElementById("calculate-btn").addEventListener("click", () => {
+  const lengthInput = document.getElementById("length");
+  const lengthCm = parseFloat(lengthInput.value);
 
-      if (isNaN(lengthCm) || lengthCm <= 0) {
-        alert("請輸入正確的廚具長度（公分）");
-        lengthInput.focus();
-        return;
-      }
+  if (isNaN(lengthCm) || lengthCm <= 0) {
+    alert("請輸入正確的廚具長度（公分）");
+    lengthInput.focus();
+    return;
+  }
 
-      if (selectedMaterialPrice === 0) {
-        alert("請選擇檯面材質");
-        return;
-      }
+  if (selectedMaterialPrice === 0) {
+    alert("請選擇檯面材質");
+    return;
+  }
 
-      const lengthM = lengthCm / 100;
-      const materialCost = lengthM * selectedMaterialPrice;
+  const materialCost = lengthCm * selectedMaterialPrice; // ✅ 修正這裡，不要除以100
 
-      let addonTotal = 0;
-      document.querySelectorAll(".addon").forEach(cb => {
-        if (cb.checked) {
-          addonTotal += parseInt(cb.dataset.price);
-        }
-      });
+  let addonTotal = 0;
+  document.querySelectorAll(".addon").forEach(cb => {
+    if (cb.checked) {
+      addonTotal += parseInt(cb.dataset.price);
+    }
+  });
+
+  const total = Math.round(materialCost + addonTotal);
+  document.getElementById("result").textContent = `總價為：NT$ ${total.toLocaleString()}`;
+});
+
 
       const total = Math.round(materialCost + addonTotal);
       document.getElementById("result").textContent = `總價為：NT$ ${total.toLocaleString()}`;
