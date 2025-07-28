@@ -8,11 +8,24 @@
   body { font-family: "Segoe UI", sans-serif; padding: 20px; background-color: #f7f7f7; max-width: 800px; margin: auto; }
   h1 { text-align: center; margin-bottom: 20px; }
   .section { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);}
-  label { display: block; margin: 8px 0; font-size: 16px;}
+  label { display: block; margin: 8px 0; font-size: 16px; position: relative; }
   input[type="number"] { width: 100%; padding: 8px; font-size: 16px; }
-  img.preview { max-width: 100%; display: none; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; }
   #result { text-align: center; font-size: 22px; font-weight: bold; margin-top: 20px; color: #d9534f; }
   .note { text-align: center; font-size: 14px; margin-top: 10px; color: #555;}
+
+  /* Hover 預覽樣式 */
+  .tooltip-img {
+    position: fixed;
+    display: none;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+    width: 200px;
+  }
+  .tooltip-img img { max-width: 100%; border-radius: 5px; }
 </style>
 </head>
 <body>
@@ -28,32 +41,45 @@
 <div class="section">
   <strong>檯面材質（擇一）：</strong>
   <div>
-    <label><input type="checkbox" name="material" value="125" data-img="https://cdn.pixabay.com/photo/2017/08/06/01/34/kitchen-2585115_1280.jpg"> 不鏽鋼檯面（$125 / 公分）</label>
-    <label><input type="checkbox" name="material" value="170" data-img="https://cdn.pixabay.com/photo/2015/08/19/08/12/stone-895050_1280.jpg"> 人造石檯面（$170 / 公分）</label>
+    <label data-img="https://cdn.pixabay.com/photo/2017/08/06/01/34/kitchen-2585115_1280.jpg">
+      <input type="checkbox" name="material" value="125"> 不鏽鋼檯面（$125 / 公分）
+    </label>
+    <label data-img="https://cdn.pixabay.com/photo/2015/08/19/08/12/stone-895050_1280.jpg">
+      <input type="checkbox" name="material" value="170"> 人造石檯面（$170 / 公分）
+    </label>
   </div>
-  <img id="material-preview" class="preview" alt="檯面示意圖">
 </div>
 
 <!-- 門板材質 -->
 <div class="section">
   <strong>門板材質（擇一）：</strong>
   <div>
-    <label><input type="checkbox" name="door" value="0" data-img="https://cdn.pixabay.com/photo/2014/10/19/20/59/wood-494617_1280.jpg"> 美耐板（不加價）</label>
-    <label><input type="checkbox" name="door" value="6" data-img="https://cdn.pixabay.com/photo/2017/02/07/10/52/kitchen-2042924_1280.jpg"> 水晶門板（+ $6 / 公分）</label>
-    <label><input type="checkbox" name="door" value="12" data-img="https://cdn.pixabay.com/photo/2017/07/31/11/21/modern-kitchen-2553961_1280.jpg"> 結晶烤漆門板（+ $12 / 公分）</label>
+    <label data-img="https://cdn.pixabay.com/photo/2014/10/19/20/59/wood-494617_1280.jpg">
+      <input type="checkbox" name="door" value="0"> 美耐板（不加價）
+    </label>
+    <label data-img="https://cdn.pixabay.com/photo/2017/02/07/10/52/kitchen-2042924_1280.jpg">
+      <input type="checkbox" name="door" value="6"> 水晶門板（+ $6 / 公分）
+    </label>
+    <label data-img="https://cdn.pixabay.com/photo/2017/07/31/11/21/modern-kitchen-2553961_1280.jpg">
+      <input type="checkbox" name="door" value="12"> 結晶烤漆門板（+ $12 / 公分）
+    </label>
   </div>
-  <img id="door-preview" class="preview" alt="門板示意圖">
 </div>
 
 <!-- 把手 -->
 <div class="section">
   <strong>把手選項（可複選）：</strong>
   <div>
-    <label><input type="checkbox" class="handle" data-price="0"> 明把手（不加價）</label>
-    <label><input type="checkbox" class="handle" data-price="7" data-img="https://cdn.pixabay.com/photo/2016/07/07/20/13/kitchen-1503233_1280.jpg"> 上崁把手（$7 / 公分）</label>
-    <label><input type="checkbox" class="handle" data-price="7" data-img="https://cdn.pixabay.com/photo/2015/06/08/15/04/kitchen-801701_1280.jpg"> 門板斜把手（$7 / 公分）</label>
+    <label>
+      <input type="checkbox" class="handle" data-price="0"> 明把手（不加價）
+    </label>
+    <label data-img="https://cdn.pixabay.com/photo/2016/07/07/20/13/kitchen-1503233_1280.jpg">
+      <input type="checkbox" class="handle" data-price="7"> 上崁把手（$7 / 公分）
+    </label>
+    <label data-img="https://cdn.pixabay.com/photo/2015/06/08/15/04/kitchen-801701_1280.jpg">
+      <input type="checkbox" class="handle" data-price="7"> 門板斜把手（$7 / 公分）
+    </label>
   </div>
-  <img id="handle-preview" class="preview" alt="把手示意圖">
 </div>
 
 <!-- 加購項目 -->
@@ -72,6 +98,9 @@
 <div id="result">總價為：NT$ 0</div>
 <div class="note">以上報價皆含門板絞鍊和不鏽鋼桶身</div>
 
+<!-- Hover 預覽圖片 -->
+<div class="tooltip-img" id="tooltip"><img src="" alt="預覽"></div>
+
 <script>
 const lengthInput = document.getElementById('length');
 const resultDiv = document.getElementById('result');
@@ -79,54 +108,27 @@ const materialInputs = document.querySelectorAll('[name="material"]');
 const doorInputs = document.querySelectorAll('[name="door"]');
 const handleInputs = document.querySelectorAll('.handle');
 const addonInputs = document.querySelectorAll('.addon');
-const materialPreview = document.getElementById('material-preview');
-const doorPreview = document.getElementById('door-preview');
-const handlePreview = document.getElementById('handle-preview');
+const tooltip = document.getElementById('tooltip');
+const tooltipImg = tooltip.querySelector('img');
 
-// 單選檯面 + 圖片
+// 單選檯面
 materialInputs.forEach(input => {
   input.addEventListener('change', () => {
-    if (input.checked) {
-      materialInputs.forEach(i => { if (i !== input) i.checked = false; });
-      materialPreview.src = input.dataset.img;
-      materialPreview.style.display = 'block';
-    } else {
-      materialPreview.style.display = 'none';
-    }
+    if (input.checked) materialInputs.forEach(i => { if (i !== input) i.checked = false; });
     calculateTotal();
   });
 });
 
-// 單選門板 + 圖片
+// 單選門板
 doorInputs.forEach(input => {
   input.addEventListener('change', () => {
-    if (input.checked) {
-      doorInputs.forEach(i => { if (i !== input) i.checked = false; });
-      doorPreview.src = input.dataset.img;
-      doorPreview.style.display = 'block';
-    } else {
-      doorPreview.style.display = 'none';
-    }
-    calculateTotal();
-  });
-});
-
-// 把手圖片（最後一個選取的圖）
-handleInputs.forEach(cb => {
-  cb.addEventListener('change', () => {
-    let lastSelected = null;
-    handleInputs.forEach(i => { if (i.checked && i.dataset.img) lastSelected = i.dataset.img; });
-    if (lastSelected) {
-      handlePreview.src = lastSelected;
-      handlePreview.style.display = 'block';
-    } else {
-      handlePreview.style.display = 'none';
-    }
+    if (input.checked) doorInputs.forEach(i => { if (i !== input) i.checked = false; });
     calculateTotal();
   });
 });
 
 lengthInput.addEventListener('input', calculateTotal);
+handleInputs.forEach(cb => cb.addEventListener('change', calculateTotal));
 addonInputs.forEach(cb => cb.addEventListener('change', calculateTotal));
 
 function calculateTotal() {
@@ -153,6 +155,21 @@ function calculateTotal() {
   const total = materialCost + doorCost + handleCost + addonTotal;
   resultDiv.textContent = `總價為：NT$ ${total.toLocaleString()}`;
 }
+
+// Hover 預覽
+document.querySelectorAll('label[data-img]').forEach(label => {
+  label.addEventListener('mouseenter', (e) => {
+    tooltipImg.src = label.dataset.img;
+    tooltip.style.display = 'block';
+  });
+  label.addEventListener('mousemove', (e) => {
+    tooltip.style.left = (e.pageX + 15) + 'px';
+    tooltip.style.top = (e.pageY + 15) + 'px';
+  });
+  label.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+  });
+});
 </script>
 </body>
 </html>
