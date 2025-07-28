@@ -14,20 +14,18 @@
     h1 {
       font-size: 24px;
       color: #222;
+      text-align: center;
     }
     label {
       display: block;
       margin-top: 1em;
+      font-weight: bold;
     }
-    input[type="number"] {
-      padding: 0.5em;
-      width: 100%;
-      max-width: 200px;
-    }
-    select {
+    input[type="number"], select {
       padding: 0.5em;
       width: 100%;
       max-width: 250px;
+      margin-top: 0.3em;
     }
     .addons {
       margin-top: 1em;
@@ -45,11 +43,20 @@
       border-radius: 4px;
       cursor: pointer;
     }
+    #calculate-btn:hover {
+      background-color: #0056b3;
+    }
     #result {
       margin-top: 2em;
       font-size: 20px;
       font-weight: bold;
       color: #d9534f;
+    }
+    .note {
+      margin-top: 1.5em;
+      font-size: 14px;
+      color: #555;
+      text-align: center;
     }
   </style>
 </head>
@@ -62,20 +69,24 @@
   <label for="material">選擇檯面材質：</label>
   <select id="material">
     <option value="0">-- 請選擇 --</option>
-    <option value="125">不鏽鋼（$125 / 公分）</option>
-    <option value="170">人造石（$170 / 公分）</option>
+    <option value="125">不鏽鋼檯面（$125 / 公分）</option>
+    <option value="170">人造石檯面（$170 / 公分）</option>
   </select>
 
   <div class="addons">
     <strong>加購項目：</strong><br />
     <label class="addon"><input type="checkbox" class="addon" data-price="3000" /> 三抽組（$3,000）</label>
-    <label class="addon"><input type="checkbox" class="addon" data-price="1500" /> 調味拉籃（$1,500）</label>
-    <label class="addon"><input type="checkbox" class="addon" data-price="2000" /> 滑軌碗盤籃（$2,000）</label>
+    <label class="addon"><input type="checkbox" class="addon" data-price="6000" /> 不鏽鋼爐下大拉籃（$6,000）</label>
+    <label class="addon"><input type="checkbox" class="addon" data-price="1500" /> 緩衝滑軌（$1,500）</label>
+    <label class="addon"><input type="checkbox" class="addon" data-price="1000" /> 手把升級（$1,000）</label>
+    <label class="addon"><input type="checkbox" class="addon" data-price="6000" /> 水槽＋龍頭（$6,000）</label>
   </div>
 
   <button id="calculate-btn">計算總價</button>
 
   <div id="result"></div>
+
+  <div class="note">以上報價皆含門板絞鍊和不鏽鋼桶身</div>
 
   <script>
     let selectedMaterialPrice = 0;
