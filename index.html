@@ -77,6 +77,15 @@
   </div>
 
   <div class="section">
+    <strong>把手選項（擇一）：</strong>
+    <div class="option-group" id="handle-options">
+      <label><input type="checkbox" name="handle" value="none"> 明把手（不加價）</label>
+      <label><input type="checkbox" name="handle" value="up"> 上崁把手（$7 / 公分）</label>
+      <label><input type="checkbox" name="handle" value="slant"> 門板斜把手（$7 / 公分）</label>
+    </div>
+  </div>
+
+  <div class="section">
     <strong>加購項目（可複選）：</strong>
     <div class="option-group">
       <label><input type="checkbox" class="addon" data-price="3000"> 三抽組（$3,000）</label>
@@ -96,6 +105,7 @@
 
     const materialInputs = document.querySelectorAll('#material-options input');
     const doorInputs = document.querySelectorAll('#door-options input');
+    const handleInputs = document.querySelectorAll('#handle-options input');
     const addonInputs = document.querySelectorAll('.addon');
 
     // 限制「檯面」單選
@@ -118,6 +128,16 @@
       });
     });
 
+    // 限制「把手」單選
+    handleInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          handleInputs.forEach(i => { if (i !== input) i.checked = false; });
+        }
+        calculateTotal();
+      });
+    });
+
     // 即時計算
     lengthInput.addEventListener('input', calculateTotal);
     addonInputs.forEach(cb => cb.addEventListener('change', calculateTotal));
@@ -131,6 +151,7 @@
 
       const material = document.querySelector('#material-options input:checked');
       const door = document.querySelector('#door-options input:checked');
+      const handle = document.querySelector('#handle-options input:checked');
 
       if (!material) {
         resultDiv.textContent = '請選擇檯面材質';
@@ -140,12 +161,21 @@
         resultDiv.textContent = '請選擇門板材質';
         return;
       }
+      if (!handle) {
+        resultDiv.textContent = '請選擇把手類型';
+        return;
+      }
 
       const materialPrice = parseInt(material.value);
       const doorPrice = parseInt(door.value);
 
       const materialCost = length * materialPrice;
       const doorCost = length * doorPrice;
+
+      let handleCost = 0;
+      if (handle.value === 'up' || handle.value === 'slant') {
+        handleCost = length * 7;
+      } // 明把手不加價
 
       let addonTotal = 0;
       addonInputs.forEach(cb => {
@@ -154,7 +184,7 @@
         }
       });
 
-      const total = materialCost + doorCost + addonTotal;
+      const total = materialCost + doorCost + handleCost + addonTotal;
       resultDiv.textContent = `總價為：NT$ ${total.toLocaleString()}`;
     }
   </script>
