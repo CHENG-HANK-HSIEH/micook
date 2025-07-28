@@ -3,125 +3,160 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>報價單產生器 - 米廚家居</title>
+  <title>米廚家居｜報價試算器</title>
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
       padding: 2em;
       background-color: #f7f7f7;
       color: #333;
+      max-width: 600px;
+      margin: auto;
     }
     h1 {
-      font-size: 24px;
-      color: #222;
       text-align: center;
+      color: #222;
+    }
+    .section {
+      margin-bottom: 1.5em;
     }
     label {
       display: block;
-      margin-top: 1em;
-      font-weight: bold;
+      margin: 0.5em 0;
     }
-    input[type="number"], select {
-      padding: 0.5em;
+    input[type="number"] {
       width: 100%;
-      max-width: 250px;
+      padding: 0.5em;
       margin-top: 0.3em;
     }
-    .addons {
-      margin-top: 1em;
+    .option-group {
+      margin-top: 0.5em;
     }
-    .addon {
+    .option-group label {
       display: block;
-      margin-bottom: 0.5em;
-    }
-    #calculate-btn {
-      margin-top: 1.5em;
-      padding: 0.8em 1.5em;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #calculate-btn:hover {
-      background-color: #0056b3;
+      margin-bottom: 0.3em;
     }
     #result {
-      margin-top: 2em;
-      font-size: 20px;
+      margin-top: 1.5em;
+      font-size: 22px;
       font-weight: bold;
+      text-align: center;
       color: #d9534f;
     }
     .note {
-      margin-top: 1.5em;
+      margin-top: 1em;
+      text-align: center;
       font-size: 14px;
       color: #555;
-      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>米廚家居｜報價單產生器</h1>
+  <h1>米廚家居｜報價試算器</h1>
 
-  <label for="length">輸入廚具長度（單位：公分）：</label>
-  <input type="number" id="length" placeholder="例如：300" />
-
-  <label for="material">選擇檯面材質：</label>
-  <select id="material">
-    <option value="0">-- 請選擇 --</option>
-    <option value="125">不鏽鋼檯面（$125 / 公分）</option>
-    <option value="170">人造石檯面（$170 / 公分）</option>
-  </select>
-
-  <div class="addons">
-    <strong>加購項目：</strong><br />
-    <label class="addon"><input type="checkbox" class="addon" data-price="3000" /> 三抽組（$3,000）</label>
-    <label class="addon"><input type="checkbox" class="addon" data-price="6000" /> 不鏽鋼爐下大拉籃（$6,000）</label>
-    <label class="addon"><input type="checkbox" class="addon" data-price="1500" /> 緩衝滑軌（$1,500）</label>
-    <label class="addon"><input type="checkbox" class="addon" data-price="1000" /> 手把升級（$1,000）</label>
-    <label class="addon"><input type="checkbox" class="addon" data-price="6000" /> 水槽＋龍頭（$6,000）</label>
+  <div class="section">
+    <label for="length">輸入廚具長度（公分）：</label>
+    <input type="number" id="length" placeholder="例如：300" min="1">
   </div>
 
-  <button id="calculate-btn">計算總價</button>
+  <div class="section">
+    <strong>檯面材質（擇一）：</strong>
+    <div class="option-group" id="material-options">
+      <label><input type="checkbox" name="material" value="125"> 不鏽鋼檯面（$125 / 公分）</label>
+      <label><input type="checkbox" name="material" value="170"> 人造石檯面（$170 / 公分）</label>
+    </div>
+  </div>
 
-  <div id="result"></div>
+  <div class="section">
+    <strong>門板材質（擇一）：</strong>
+    <div class="option-group" id="door-options">
+      <label><input type="checkbox" name="door" value="0"> 美耐板（不加價）</label>
+      <label><input type="checkbox" name="door" value="6"> 水晶門板（+ $6 / 公分）</label>
+      <label><input type="checkbox" name="door" value="12"> 結晶烤漆門板（+ $12 / 公分）</label>
+    </div>
+  </div>
 
+  <div class="section">
+    <strong>加購項目（可複選）：</strong>
+    <div class="option-group">
+      <label><input type="checkbox" class="addon" data-price="3000"> 三抽組（$3,000）</label>
+      <label><input type="checkbox" class="addon" data-price="6000"> 不鏽鋼爐下大拉籃（$6,000）</label>
+      <label><input type="checkbox" class="addon" data-price="1500"> 緩衝滑軌（$1,500）</label>
+      <label><input type="checkbox" class="addon" data-price="1000"> 手把升級（$1,000）</label>
+      <label><input type="checkbox" class="addon" data-price="6000"> 水槽＋龍頭（$6,000）</label>
+    </div>
+  </div>
+
+  <div id="result">總價為：NT$ 0</div>
   <div class="note">以上報價皆含門板絞鍊和不鏽鋼桶身</div>
 
   <script>
-    let selectedMaterialPrice = 0;
+    const lengthInput = document.getElementById('length');
+    const resultDiv = document.getElementById('result');
 
-    document.getElementById("material").addEventListener("change", (e) => {
-      selectedMaterialPrice = parseInt(e.target.value);
+    const materialInputs = document.querySelectorAll('#material-options input');
+    const doorInputs = document.querySelectorAll('#door-options input');
+    const addonInputs = document.querySelectorAll('.addon');
+
+    // 限制「檯面」單選
+    materialInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          materialInputs.forEach(i => { if (i !== input) i.checked = false; });
+        }
+        calculateTotal();
+      });
     });
 
-    document.getElementById("calculate-btn").addEventListener("click", () => {
-      const lengthInput = document.getElementById("length");
-      const lengthCm = parseFloat(lengthInput.value);
+    // 限制「門板」單選
+    doorInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          doorInputs.forEach(i => { if (i !== input) i.checked = false; });
+        }
+        calculateTotal();
+      });
+    });
 
-      if (isNaN(lengthCm) || lengthCm <= 0) {
-        alert("請輸入正確的廚具長度（公分）");
-        lengthInput.focus();
+    // 即時計算
+    lengthInput.addEventListener('input', calculateTotal);
+    addonInputs.forEach(cb => cb.addEventListener('change', calculateTotal));
+
+    function calculateTotal() {
+      const length = parseFloat(lengthInput.value);
+      if (isNaN(length) || length <= 0) {
+        resultDiv.textContent = '請輸入正確的廚具長度';
         return;
       }
 
-      if (selectedMaterialPrice === 0) {
-        alert("請選擇檯面材質");
+      const material = document.querySelector('#material-options input:checked');
+      const door = document.querySelector('#door-options input:checked');
+
+      if (!material) {
+        resultDiv.textContent = '請選擇檯面材質';
+        return;
+      }
+      if (!door) {
+        resultDiv.textContent = '請選擇門板材質';
         return;
       }
 
-      const materialCost = lengthCm * selectedMaterialPrice;
+      const materialPrice = parseInt(material.value);
+      const doorPrice = parseInt(door.value);
+
+      const materialCost = length * materialPrice;
+      const doorCost = length * doorPrice;
 
       let addonTotal = 0;
-      document.querySelectorAll(".addon").forEach(cb => {
+      addonInputs.forEach(cb => {
         if (cb.checked) {
           addonTotal += parseInt(cb.dataset.price);
         }
       });
 
-      const total = Math.round(materialCost + addonTotal);
-      document.getElementById("result").textContent = `總價為：NT$ ${total.toLocaleString()}`;
-    });
+      const total = materialCost + doorCost + addonTotal;
+      resultDiv.textContent = `總價為：NT$ ${total.toLocaleString()}`;
+    }
   </script>
 </body>
 </html>
