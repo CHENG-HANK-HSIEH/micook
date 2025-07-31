@@ -66,8 +66,8 @@
     <label>
       <input type="checkbox" id="chkWall" /> 吊櫃長度（cm）：
       <input type="number" id="wallLength" min="0" value="0" disabled />
+      <span class="note">吊櫃材質：V313塑合板，價格 $48 / 公分，高度60~70cm，其他尺寸另計</span>
     </label>
-    <div class="note">吊櫃高度60~70cm，其他尺寸另行報價</div>
   </div>
 
   <!-- 2. 檯面材質 -->
@@ -85,12 +85,12 @@
     <label><input type="radio" name="doorMaterial" value="12" /> 結晶鋼烤門板（+12元/cm）</label>
   </div>
 
-  <!-- 4. 把手 -->
+  <!-- 4. 把手（單選） -->
   <div class="section">
-    <h2>把手選項（可複選）</h2>
-    <label><input type="checkbox" id="handleMing" /> 明把手（價格另議，不計入總價）</label>
-    <label><input type="checkbox" id="handleUp" /> 上崁把手 $7/cm</label>
-    <label><input type="checkbox" id="handleSlant" /> 門板斜把手 $7/cm</label>
+    <h2>把手選項（單選）</h2>
+    <label><input type="radio" name="handle" id="handleMing" value="0" checked /> 明把手（價格另議，不計入總價）</label>
+    <label><input type="radio" name="handle" id="handleUp" value="7" /> 上崁把手 $7/cm</label>
+    <label><input type="radio" name="handle" id="handleSlant" value="7" /> 門板斜把手 $7/cm</label>
     <div class="note">把手長度自動計算為吊櫃長度 + 地櫃長度</div>
   </div>
 
@@ -138,6 +138,9 @@
   document.querySelectorAll('input[name="doorMaterial"]').forEach(radio => {
     radio.addEventListener('change', calculate);
   });
+  document.querySelectorAll('input[name="handle"]').forEach(radio => {
+    radio.addEventListener('change', calculate);
+  });
 
   // 監聽加購品項
   document.querySelectorAll('.addon').forEach(cb => {
@@ -171,14 +174,12 @@
 
     // 把手價格（長度為吊櫃長度 + 地櫃長度，單價7元）
     const handleLength = (baseChecked ? baseLength : 0) + (wallChecked ? wallLength : 0);
+    const handlePrice = parseInt(document.querySelector('input[name="handle"]:checked').value);
 
-    if (document.getElementById('handleUp').checked) {
-      total += handleLength * 7;
+    if (handlePrice > 0) {
+      total += handleLength * handlePrice;
     }
-    if (document.getElementById('handleSlant').checked) {
-      total += handleLength * 7;
-    }
-    // 明把手勾選但不計價
+    // 明把手價格為0，不計入總價
 
     // 加購品項
     document.querySelectorAll('.addon:checked').forEach(cb => {
