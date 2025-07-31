@@ -64,4 +64,149 @@
       <span class="note">地櫃材質固定為不鏽鋼，價格依檯面+門板計算</span>
     </label>
     <label>
-      <input type="checkbox" id="chkW
+      <input type="checkbox" id="chkWall" /> 吊櫃長度（cm）：
+      <input type="number" id="wallLength" min="0" value="0" disabled />
+    </label>
+    <div class="note">吊櫃高度60~70cm，其他尺寸另行報價</div>
+  </div>
+
+  <!-- 2. 檯面材質 -->
+  <div class="section">
+    <h2>檯面材質（勾選一項）</h2>
+    <label><input type="radio" name="countertop" value="125" checked /> 不鏽鋼檯面（$125/cm）</label>
+    <label><input type="radio" name="countertop" value="170" /> 人造石檯面（$170/cm）</label>
+  </div>
+
+  <!-- 3. 門板材質 -->
+  <div class="section">
+    <h2>門板材質（勾選一項）</h2>
+    <label><input type="radio" name="doorMaterial" value="0" checked /> 美耐板（標配，不加價）</label>
+    <label><input type="radio" name="doorMaterial" value="6" /> 水晶門板（+6元/cm）</label>
+    <label><input type="radio" name="doorMaterial" value="12" /> 結晶鋼烤門板（+12元/cm）</label>
+  </div>
+
+  <!-- 4. 把手 -->
+  <div class="section">
+    <h2>把手選項（可複選）</h2>
+    <label><input type="checkbox" id="handleMing" checked disabled /> 明把手（不加價）</label>
+    <label>
+      <input type="checkbox" id="handleUp" /> 上崁把手 $7/cm
+      <input type="number" id="handleUpLength" min="0" value="0" disabled />
+    </label>
+    <label>
+      <input type="checkbox" id="handleSlant" /> 門板斜把手 $7/cm
+      <input type="number" id="handleSlantLength" min="0" value="0" disabled />
+    </label>
+  </div>
+
+  <!-- 5. 加購品項 -->
+  <div class="section">
+    <h2>加購品項（可複選）</h2>
+    <label><input type="checkbox" class="addon" data-price="3000" /> 三抽組（$3,000）</label>
+    <label><input type="checkbox" class="addon" data-price="6000" /> 不鏽鋼爐下大拉籃（$6,000）</label>
+    <label><input type="checkbox" class="addon" data-price="1500" /> 緩衝滑軌（$1,500）</label>
+    <label><input type="checkbox" class="addon" data-price="1000" /> 手把升級（$1,000）</label>
+    <label><input type="checkbox" class="addon" data-price="6000" /> 水槽＋龍頭（$6,000）</label>
+  </div>
+
+  <div id="result">總價：NT$ 0</div>
+
+<script>
+  // 啟用/停用長度欄位
+  document.getElementById('chkBase').addEventListener('change', e => {
+    document.getElementById('baseLength').disabled = !e.target.checked;
+    calculate();
+  });
+  document.getElementById('chkWall').addEventListener('change', e => {
+    document.getElementById('wallLength').disabled = !e.target.checked;
+    calculate();
+  });
+
+  // 把手長度欄位啟用控制
+  document.getElementById('handleUp').addEventListener('change', e => {
+    document.getElementById('handleUpLength').disabled = !e.target.checked;
+    calculate();
+  });
+  document.getElementById('handleSlant').addEventListener('change', e => {
+    document.getElementById('handleSlantLength').disabled = !e.target.checked;
+    calculate();
+  });
+
+  // 監聽所有可影響計算的輸入
+  [
+    'baseLength',
+    'wallLength',
+    'handleUpLength',
+    'handleSlantLength',
+    'chkBase',
+    'chkWall',
+    'handleUp',
+    'handleSlant'
+  ].forEach(id => {
+    document.getElementById(id).addEventListener('input', calculate);
+    document.getElementById(id).addEventListener('change', calculate);
+  });
+
+  // 監聽單選按鈕
+  document.querySelectorAll('input[name="countertop"]').forEach(radio => {
+    radio.addEventListener('change', calculate);
+  });
+  document.querySelectorAll('input[name="doorMaterial"]').forEach(radio => {
+    radio.addEventListener('change', calculate);
+  });
+
+  // 監聽加購品項
+  document.querySelectorAll('.addon').forEach(cb => {
+    cb.addEventListener('change', calculate);
+  });
+
+  function calculate() {
+    let total = 0;
+
+    const baseChecked = document.getElementById('chkBase').checked;
+    const baseLength = parseFloat(document.getElementById('baseLength').value) || 0;
+
+    const wallChecked = document.getElementById('chkWall').checked;
+    const wallLength = parseFloat(document.getElementById('wallLength').value) || 0;
+
+    // 檯面材質價格
+    const counterPrice = parseInt(document.querySelector('input[name="countertop"]:checked').value);
+
+    // 門板加價
+    const doorAdd = parseInt(document.querySelector('input[name="doorMaterial"]:checked').value);
+
+    // 地櫃價格 = (檯面 + 門板) * 長度
+    if (baseChecked && baseLength > 0) {
+      total += baseLength * (counterPrice + doorAdd);
+    }
+
+    // 吊櫃價格 (櫃體48元/cm + 門板加價) * 吊櫃長度
+    if (wallChecked && wallLength > 0) {
+      total += wallLength * (48 + doorAdd);
+    }
+
+    // 吊櫃把手價格
+    if (document.getElementById('handleUp').checked) {
+      const len = parseFloat(document.getElementById('handleUpLength').value) || 0;
+      total += len * 7;
+    }
+    if (document.getElementById('handleSlant').checked) {
+      const len = parseFloat(document.getElementById('handleSlantLength').value) || 0;
+      total += len * 7;
+    }
+    // 明把手不計價
+
+    // 加購品項
+    document.querySelectorAll('.addon:checked').forEach(cb => {
+      total += parseInt(cb.dataset.price);
+    });
+
+    document.getElementById('result').textContent = '總價：NT$ ' + total.toLocaleString();
+  }
+
+  // 初始化計算
+  calculate();
+</script>
+
+</body>
+</html>
