@@ -1,175 +1,110 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>米廚家居｜報價試算器</title>
-<style>
-  body { font-family: "Segoe UI", sans-serif; padding: 20px; background-color: #f7f7f7; max-width: 800px; margin: auto; }
-  h1 { text-align: center; margin-bottom: 20px; }
-  .section { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);}
-  label { display: block; margin: 8px 0; font-size: 16px; position: relative; }
-  input[type="number"] { width: 100%; padding: 8px; font-size: 16px; }
-  #result { text-align: center; font-size: 22px; font-weight: bold; margin-top: 20px; color: #d9534f; }
-  .note { text-align: center; font-size: 14px; margin-top: 10px; color: #555;}
-
-  /* Hover 預覽樣式 */
-  .tooltip-img {
-    position: fixed;
-    display: none;
-    border: 1px solid #ccc;
-    background: #fff;
-    padding: 5px;
-    border-radius: 5px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    z-index: 9999;
-    width: 200px;
-  }
-  .tooltip-img img { max-width: 100%; border-radius: 5px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>米廚報價單產生器</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f8f8f8; }
+    h2 { margin-top: 30px; }
+    .section { background: #fff; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    label { display: block; margin: 10px 0 5px; }
+    input[type="number"], select { padding: 5px; width: 100%; max-width: 200px; }
+    .total { font-weight: bold; font-size: 1.2em; margin-top: 20px; }
+    .intro { font-size: 0.9em; color: #555; margin-bottom: 10px; }
+  </style>
 </head>
 <body>
-<h1>米廚家居｜報價試算器</h1>
+  <h1>米廚家居 - 報價單產生器</h1>
 
-<!-- 長度 -->
-<div class="section">
-  <label for="length">輸入廚具長度（公分）：</label>
-  <input type="number" id="length" placeholder="例如：300" min="1">
-</div>
+  <div class="section">
+    <h2>櫃體選擇</h2>
+    <label>地櫃長度 (cm):</label>
+    <input type="number" id="baseLength" placeholder="例如：200" />
 
-<!-- 檯面材質 -->
-<div class="section">
-  <strong>檯面材質（擇一）：</strong>
-  <div>
-    <label data-img="https://cdn.pixabay.com/photo/2017/08/06/01/34/kitchen-2585115_1280.jpg">
-      <input type="checkbox" name="material" value="125"> 不鏽鋼檯面（$125 / 公分）
-    </label>
-    <label data-img="https://cdn.pixabay.com/photo/2015/08/19/08/12/stone-895050_1280.jpg">
-      <input type="checkbox" name="material" value="170"> 人造石檯面（$170 / 公分）
-    </label>
+    <label>吊櫃長度 (cm):</label>
+    <input type="number" id="wallLength" placeholder="例如：150" />
+    <p class="intro">吊櫃預設高度為 60~70cm，單價 $48/cm。其他高度請另外報價。</p>
   </div>
-</div>
 
-<!-- 門板材質 -->
-<div class="section">
-  <strong>門板材質（擇一）：</strong>
-  <div>
-    <label data-img="https://cdn.pixabay.com/photo/2014/10/19/20/59/wood-494617_1280.jpg">
-      <input type="checkbox" name="door" value="0"> 美耐板（不加價）
-    </label>
-    <label data-img="https://cdn.pixabay.com/photo/2017/02/07/10/52/kitchen-2042924_1280.jpg">
-      <input type="checkbox" name="door" value="6"> 水晶門板（+ $6 / 公分）
-    </label>
-    <label data-img="https://cdn.pixabay.com/photo/2017/07/31/11/21/modern-kitchen-2553961_1280.jpg">
-      <input type="checkbox" name="door" value="12"> 結晶烤漆門板（+ $12 / 公分）
-    </label>
+  <div class="section">
+    <h2>檯面材質</h2>
+    <label for="countertop">選擇材質：</label>
+    <select id="countertop">
+      <option value="0">-- 請選擇 --</option>
+      <option value="120">人造石（$120/cm） - 色澤柔和，基本耐刮抗污</option>
+      <option value="150">石英石（$150/cm） - 抗污耐高溫，適合常下廚</option>
+      <option value="200">天然石（$200/cm） - 天然紋理，質感出眾</option>
+    </select>
   </div>
-</div>
 
-<!-- 把手 -->
-<div class="section">
-  <strong>把手選項（可複選）：</strong>
-  <div>
-    <label>
-      <input type="checkbox" class="handle" data-price="0"> 明把手（不加價）
-    </label>
-    <label data-img="https://cdn.pixabay.com/photo/2016/07/07/20/13/kitchen-1503233_1280.jpg">
-      <input type="checkbox" class="handle" data-price="7"> 上崁把手（$7 / 公分）
-    </label>
-    <label data-img="https://cdn.pixabay.com/photo/2015/06/08/15/04/kitchen-801701_1280.jpg">
-      <input type="checkbox" class="handle" data-price="7"> 門板斜把手（$7 / 公分）
-    </label>
+  <div class="section">
+    <h2>門板材質</h2>
+    <label for="doorPanel">選擇材質：</label>
+    <select id="doorPanel">
+      <option value="0">-- 請選擇 --</option>
+      <option value="100">美耐板（$100/cm） - 經濟實惠，花色多樣</option>
+      <option value="130">結晶鋼烤（$130/cm） - 鏡面亮光，現代風格</option>
+      <option value="160">實木貼皮（$160/cm） - 溫潤自然，高質感</option>
+    </select>
   </div>
-</div>
 
-<!-- 加購項目 -->
-<div class="section">
-  <strong>加購項目（可複選）：</strong>
-  <div>
-    <label><input type="checkbox" class="addon" data-price="3000"> 三抽組（$3,000）</label>
-    <label><input type="checkbox" class="addon" data-price="6000"> 不鏽鋼爐下大拉籃（$6,000）</label>
-    <label><input type="checkbox" class="addon" data-price="1500"> 緩衝滑軌（$1,500）</label>
-    <label><input type="checkbox" class="addon" data-price="1000"> 手把升級（$1,000）</label>
-    <label><input type="checkbox" class="addon" data-price="6000"> 水槽＋龍頭（$6,000）</label>
+  <div class="section">
+    <h2>把手選擇</h2>
+    <label for="handleType">選擇把手：</label>
+    <select id="handleType">
+      <option value="0">-- 不含把手 --</option>
+      <option value="明把手">明把手（$60／隻，不計算）</option>
+      <option value="上崁">上崁把手（$7/cm）</option>
+      <option value="門板斜">門板斜把手（$7/cm）</option>
+      <option value="其他">其他（另外報價）</option>
+    </select>
   </div>
-</div>
 
-<!-- 計算結果 -->
-<div id="result">總價為：NT$ 0</div>
-<div class="note">以上報價皆含門板絞鍊和不鏽鋼桶身</div>
+  <div class="section total">
+    總金額：<span id="totalPrice">$0</span>
+  </div>
 
-<!-- Hover 預覽圖片 -->
-<div class="tooltip-img" id="tooltip"><img src="" alt="預覽"></div>
+  <script>
+    const baseInput = document.getElementById('baseLength');
+    const wallInput = document.getElementById('wallLength');
+    const countertopSelect = document.getElementById('countertop');
+    const doorPanelSelect = document.getElementById('doorPanel');
+    const handleTypeSelect = document.getElementById('handleType');
+    const totalDisplay = document.getElementById('totalPrice');
 
-<script>
-const lengthInput = document.getElementById('length');
-const resultDiv = document.getElementById('result');
-const materialInputs = document.querySelectorAll('[name="material"]');
-const doorInputs = document.querySelectorAll('[name="door"]');
-const handleInputs = document.querySelectorAll('.handle');
-const addonInputs = document.querySelectorAll('.addon');
-const tooltip = document.getElementById('tooltip');
-const tooltipImg = tooltip.querySelector('img');
+    function calculateTotal() {
+      const baseLength = parseFloat(baseInput.value) || 0;
+      const wallLength = parseFloat(wallInput.value) || 0;
 
-// 單選檯面
-materialInputs.forEach(input => {
-  input.addEventListener('change', () => {
-    if (input.checked) materialInputs.forEach(i => { if (i !== input) i.checked = false; });
-    calculateTotal();
-  });
-});
+      const baseCabinetPrice = baseLength * 60;
+      const wallCabinetPrice = wallLength * 48;
 
-// 單選門板
-doorInputs.forEach(input => {
-  input.addEventListener('change', () => {
-    if (input.checked) doorInputs.forEach(i => { if (i !== input) i.checked = false; });
-    calculateTotal();
-  });
-});
+      const countertopUnit = parseFloat(countertopSelect.value) || 0;
+      const doorPanelUnit = parseFloat(doorPanelSelect.value) || 0;
 
-lengthInput.addEventListener('input', calculateTotal);
-handleInputs.forEach(cb => cb.addEventListener('change', calculateTotal));
-addonInputs.forEach(cb => cb.addEventListener('change', calculateTotal));
+      const handleType = handleTypeSelect.value;
+      let handlePrice = 0;
 
-function calculateTotal() {
-  const length = parseFloat(lengthInput.value);
-  if (isNaN(length) || length <= 0) { resultDiv.textContent = '請輸入正確的廚具長度'; return; }
+      const totalLength = baseLength + wallLength;
 
-  const material = document.querySelector('[name="material"]:checked');
-  const door = document.querySelector('[name="door"]:checked');
+      if (handleType === '上崁' || handleType === '門板斜') {
+        handlePrice = totalLength * 7;
+      } // 明把手與其他不計算價格
 
-  if (!material) { resultDiv.textContent = '請選擇檯面材質'; return; }
-  if (!door) { resultDiv.textContent = '請選擇門板材質'; return; }
+      const countertopPrice = totalLength * countertopUnit;
+      const doorPanelPrice = totalLength * doorPanelUnit;
 
-  const materialPrice = parseInt(material.value);
-  const doorPrice = parseInt(door.value);
-  const materialCost = length * materialPrice;
-  const doorCost = length * doorPrice;
+      const total = baseCabinetPrice + wallCabinetPrice + countertopPrice + doorPanelPrice + handlePrice;
 
-  let handleCost = 0;
-  handleInputs.forEach(cb => { if (cb.checked && parseInt(cb.dataset.price) > 0) handleCost += length * parseInt(cb.dataset.price); });
+      totalDisplay.textContent = `$${total.toLocaleString()}`;
+    }
 
-  let addonTotal = 0;
-  addonInputs.forEach(cb => { if (cb.checked) addonTotal += parseInt(cb.dataset.price); });
-
-  const total = materialCost + doorCost + handleCost + addonTotal;
-  resultDiv.textContent = `總價為：NT$ ${total.toLocaleString()}`;
-}
-
-// Hover 預覽
-document.querySelectorAll('label[data-img]').forEach(label => {
-  label.addEventListener('mouseenter', (e) => {
-    tooltipImg.src = label.dataset.img;
-    tooltip.style.display = 'block';
-  });
-  label.addEventListener('mousemove', (e) => {
-    tooltip.style.left = (e.pageX + 15) + 'px';
-    tooltip.style.top = (e.pageY + 15) + 'px';
-  });
-  label.addEventListener('mouseleave', () => {
-    tooltip.style.display = 'none';
-  });
-});
-</script>
+    baseInput.addEventListener('input', calculateTotal);
+    wallInput.addEventListener('input', calculateTotal);
+    countertopSelect.addEventListener('change', calculateTotal);
+    doorPanelSelect.addEventListener('change', calculateTotal);
+    handleTypeSelect.addEventListener('change', calculateTotal);
+  </script>
 </body>
 </html>
