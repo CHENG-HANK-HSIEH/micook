@@ -88,15 +88,10 @@
   <!-- 4. 把手 -->
   <div class="section">
     <h2>把手選項（可複選）</h2>
-    <label><input type="checkbox" id="handleMing" checked disabled /> 明把手（不加價）</label>
-    <label>
-      <input type="checkbox" id="handleUp" /> 上崁把手 $7/cm
-      <input type="number" id="handleUpLength" min="0" value="0" disabled />
-    </label>
-    <label>
-      <input type="checkbox" id="handleSlant" /> 門板斜把手 $7/cm
-      <input type="number" id="handleSlantLength" min="0" value="0" disabled />
-    </label>
+    <label><input type="checkbox" id="handleMing" /> 明把手（價格另議，不計入總價）</label>
+    <label><input type="checkbox" id="handleUp" /> 上崁把手 $7/cm</label>
+    <label><input type="checkbox" id="handleSlant" /> 門板斜把手 $7/cm</label>
+    <div class="note">把手長度自動計算為吊櫃長度 + 地櫃長度</div>
   </div>
 
   <!-- 5. 加購品項 -->
@@ -122,24 +117,13 @@
     calculate();
   });
 
-  // 把手長度欄位啟用控制
-  document.getElementById('handleUp').addEventListener('change', e => {
-    document.getElementById('handleUpLength').disabled = !e.target.checked;
-    calculate();
-  });
-  document.getElementById('handleSlant').addEventListener('change', e => {
-    document.getElementById('handleSlantLength').disabled = !e.target.checked;
-    calculate();
-  });
-
   // 監聽所有可影響計算的輸入
   [
     'baseLength',
     'wallLength',
-    'handleUpLength',
-    'handleSlantLength',
     'chkBase',
     'chkWall',
+    'handleMing',
     'handleUp',
     'handleSlant'
   ].forEach(id => {
@@ -185,16 +169,16 @@
       total += wallLength * (48 + doorAdd);
     }
 
-    // 吊櫃把手價格
+    // 把手價格（長度為吊櫃長度 + 地櫃長度，單價7元）
+    const handleLength = (baseChecked ? baseLength : 0) + (wallChecked ? wallLength : 0);
+
     if (document.getElementById('handleUp').checked) {
-      const len = parseFloat(document.getElementById('handleUpLength').value) || 0;
-      total += len * 7;
+      total += handleLength * 7;
     }
     if (document.getElementById('handleSlant').checked) {
-      const len = parseFloat(document.getElementById('handleSlantLength').value) || 0;
-      total += len * 7;
+      total += handleLength * 7;
     }
-    // 明把手不計價
+    // 明把手勾選但不計價
 
     // 加購品項
     document.querySelectorAll('.addon:checked').forEach(cb => {
